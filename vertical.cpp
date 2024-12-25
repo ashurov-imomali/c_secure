@@ -19,19 +19,12 @@ std::string getUnique(std::string s)
 
 std::string sort(std::string s)
 {
-    for (int i = s.length()-1; i >= 0; i--)
-    {
-        int maxInd = i;
-        char max = s[i];
-        for (int j = 0; j < i; j++)
-        {
-            if (s[j] > max)
-            {
-                max = s[j];
-                maxInd = j;
+    for (int i = 0; i < s.length(); ++i) {
+        for (int j = 0; j < s.length() - 1; j++) {
+            if (std::to_string(s[j]) > std::to_string(s[j+1])) {
+                std::swap(s[j], s[j+1]);
             }
         }
-        std::swap(s[i], s[maxInd]);
     }
     return s;
 }
