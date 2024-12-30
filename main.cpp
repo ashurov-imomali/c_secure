@@ -8,7 +8,6 @@
 #include <map>
 #include <vector>
 #include <functional>
-#include <wsman.h>
 // #include <Functional>
 
 
@@ -44,7 +43,13 @@ int main(){
     mp[3] = "Plaifor";
     std::string enc = readFile("../plaifor.txt");
     std::string keys[] = {
-
+            "доступный", "информатика", "информация", "клавиатура", "клиент",
+            "компьютер", "модернизация", "накопление", "обеспечить", "память",
+            "предложение", "прикладная", "системное", "сохранение", "угроза",
+            "целостность", "центральный", "шифрование", "applied", "client",
+            "computer", "decrypt", "display", "encrypt", "keyboard", "matrix",
+            "memory", "model", "monitor", "mouse", "program", "result", "save",
+            "system", "value", "vector"
     };
     for (std::string key:keys) {
         for (int i = 0; i < 4; ++i) {

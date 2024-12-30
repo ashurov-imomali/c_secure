@@ -102,11 +102,11 @@ int *getDecFromMatrix(int *a, int *b) {
 
 
 std::string  plaiforEncode(std::string key, std::string s) {
-    std::map<char, int*> mp= getMatrix(key);
+    std::map<char, int*> mp1= getMatrix(key);
     s = getCleanStr(s);
     std::string enc;
     for (int i = 0; i < s.length(); i+=2) {
-        int * indexes = getFromMrx(mp[s[i]], mp[s[i+1]]);
+        int * indexes = getFromMrx(mp1[s[i]], mp1[s[i+1]]);
         enc += mrx[indexes[0]][indexes[1]];
         enc += mrx[indexes[2]][indexes[3]];
     }
