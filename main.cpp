@@ -2,11 +2,13 @@
 #include "plaifor.h"
 #include "vertical.h"
 #include "veginer.h"
+#include "hill.h"
 #include <windows.h>
 #include <fstream>
 #include <map>
 #include <vector>
 #include <functional>
+#include <wsman.h>
 // #include <Functional>
 
 
@@ -41,7 +43,12 @@ int main(){
     mp[2] = "Vertical";
     mp[3] = "Plaifor";
     std::string enc = readFile("../plaifor.txt");
-    for (int i = 0; i < 4; ++i) {
-        std::cout << "\n" << mp[i] << " " << pairs[i](enc,"key") << "\n";
+    std::string keys[] = {
+
+    };
+    for (std::string key:keys) {
+        for (int i = 0; i < 4; ++i) {
+            std::cout << "\n" << mp[i] << " " << pairs[i](enc, key) << "\n";
+        }
     }
 }
