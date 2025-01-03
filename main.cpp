@@ -2,7 +2,6 @@
 #include "plaifor.h"
 #include "vertical.h"
 #include "veginer.h"
-#include "hill.h"
 #include <windows.h>
 #include <fstream>
 #include <map>

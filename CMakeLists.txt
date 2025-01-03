@@ -10,4 +10,7 @@ add_executable(secure main.cpp
         veginer.h
         veginer.cpp
         plaifor.h
-        plaifor.cpp)
+        plaifor.cpp
+        hill.cpp
+        hill.h
+)
