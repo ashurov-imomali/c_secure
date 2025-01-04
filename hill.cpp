@@ -130,15 +130,15 @@ std::string hillEncode(std::string text, std::string key) {
     return GetStrFromMrx(resMrx, rows, cols);
 }
 
-int **getNewA(int **a, int k, int n) {
+int **getNewA(int **a, int row, int col, int n) {
     int **newA = new int *[n - 1];
     for (int j = 0; j < n; ++j) {
         newA[j] = new int[n - 1];
     }
     for (int i = 0, ni = 0; i < n; ++i) {
-        if (i == k) continue;
+        if (i == row) continue;
         for (int j = 0, nj = 0; j < n; ++j) {
-            if (j == k) continue;
+            if (j == col) continue;
             newA[ni][nj++] = a[i][j];
         }
         ni++;
@@ -158,9 +158,19 @@ int getDetermOfMrx(int **a, int n) {
     }
     int res = 0;
     for (int i = 0; i < n; ++i) {
-        res += a[0][i] * getDetermOfMrx(getNewA(a,i,n),n - 1);
+        res += a[0][i] * getDetermOfMrx(getNewA(a,0,i,n),n - 1);
     }
     return res;
+}
+
+
+
+std::string decodeHill(std::string txt, std::string key)
+{
+    int col = 5;
+    int** vectors = createVectors(txt, col);
+    int** mrx = getMrx(key, col);
+
 }
 
 
@@ -170,13 +180,13 @@ int main() {
     createBetaAl();
 
     int ** mrx = getMrx("IMOMALI", 4);
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            std::cout << mrx[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-    int ** newA = getNewA(mrx, 2,4);
+    // for (int i = 0; i < 4; ++i) {
+    //     for (int j = 0; j < 4; ++j) {
+    //         std::cout << mrx[i][j] << " ";
+    //     }
+    //     std::cout << "\n";
+    // }
+    int ** newA = getNewA(mrx,2, 2,4);
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             std::cout << newA[i][j] << " ";
