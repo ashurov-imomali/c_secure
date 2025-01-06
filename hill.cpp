@@ -1,3 +1,5 @@
+#include <cmath>
+#include <future>
 #include <iostream>
 #include <windows.h>
 #include <map>
@@ -5,6 +7,24 @@
 std::map<int, char> alphaBet;
 std::map<char, int> betaAl;
 
+
+void PrintMrxI(int ** mrx,  int row, int col) {
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            std::cout << mrx[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
+void PrintMrx(double ** mrx,  int row, int col) {
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            std::cout << mrx[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
 
 void createAlphaBet() {
     int s = 'A';
@@ -31,7 +51,7 @@ void createBetaAl() {
     int s = 'A';
     // betaAl['A'] = 0;
     // std::cout << betaAl['A'];
-    for (int i = 0; i < 27; ++i) {
+    for (int i = 0; i < 26; ++i) {
         betaAl[s++] = i;
     }
     // for (int i = 0; i < 26; ++i)
@@ -119,11 +139,21 @@ std::string GetStrFromMrx(int **mrx, int rows, int cols) {
     }
     return str;
 }
+std::string GetStrDecFromMrx(int **mrx, int rows, int cols) {
+    std::string str;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            str += betaAl[mrx[i][j]];
+        }
+    }
+
+    return str;
+}
 
 std::string hillEncode(std::string text, std::string key) {
     createAlphaBet();
     createBetaAl();
-    int cols = 5, rows = text.length() / cols + text.length() % cols;
+    int cols = 3, rows = text.length() / cols + text.length() % cols;
     int ** mrx = getMrx(key, cols);
     int ** vectors = createVectors(text, cols);
     int ** resMrx = multiplyMrxToVectors(mrx, vectors, rows, cols);
@@ -143,12 +173,6 @@ int **getNewA(int **a, int row, int col, int n) {
         }
         ni++;
     }
-    for (int i = 0; i < n-1; ++i) {
-        for (int j = 0; j < n-1; ++j) {
-            std::cout << newA[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
     return newA;
 }
 
@@ -158,19 +182,80 @@ int getDetermOfMrx(int **a, int n) {
     }
     int res = 0;
     for (int i = 0; i < n; ++i) {
-        res += a[0][i] * getDetermOfMrx(getNewA(a,0,i,n),n - 1);
+        res += pow(-1, i)*a[0][i] * getDetermOfMrx(getNewA(a,0,i,n),n - 1);
     }
     return res;
 }
 
 
 
+
+int ** getTranspMrx(int **mrx, int n) {
+    int ** na = new int *[n];
+    for (int i = 0; i < n; ++i) {
+        na[i] = new int[n];
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            na[i][j] = mrx[j][i];
+        }
+    }
+    return na;
+}
+
+
+int **getMrxMinors(int **mrx, int n){
+    int **nMrx = new int *[n];
+    for (int i = 0; i < n; ++i) {
+        nMrx[i] = new int[n];
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            int **na = getNewA(mrx,i,j,n);
+            int k = i+j;
+            int determ = getDetermOfMrx(na, n-1);
+            nMrx[i][j] = determ;
+        }
+    }
+
+    return nMrx;
+
+}
+
+int **multiPlyMrxtoNum(int **mrx, int n, int num) {
+    std::cout << num  << "\n";
+    int **nMrx = new int *[n];
+    for (int i = 0; i < n; ++i) {
+        nMrx[i] = new int[n];
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            nMrx[i][j] = (mrx[i][j] * num) % betaAl.size();
+        }
+    }
+    return nMrx;
+}
+
+int **getReverseMrx(int **mrx, int n) {
+    PrintMrxI(mrx, n, n);
+    int determ = getDetermOfMrx(mrx, n) % betaAl.size();
+    int ** minors = getMrxMinors(mrx,n);
+    PrintMrxI(minors, n, n);
+    int ** transpMrx = getTranspMrx(minors, n);
+    return multiPlyMrxtoNum(transpMrx,n,1);
+}
+
+
+
 std::string decodeHill(std::string txt, std::string key)
 {
-    int col = 5;
+    int col = 3;
     int** vectors = createVectors(txt, col);
     int** mrx = getMrx(key, col);
-
+    int **reverse = getReverseMrx(mrx, col);
+    int row = txt.length() / col + txt.length()%col;
+    int ** result = multiplyMrxToVectors(reverse, vectors, row, col);
+    return GetStrDecFromMrx(result, row, col);
 }
 
 
@@ -178,25 +263,12 @@ int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     createBetaAl();
-
-    int ** mrx = getMrx("IMOMALI", 4);
-    // for (int i = 0; i < 4; ++i) {
-    //     for (int j = 0; j < 4; ++j) {
-    //         std::cout << mrx[i][j] << " ";
-    //     }
-    //     std::cout << "\n";
-    // }
-    int ** newA = getNewA(mrx,2, 2,4);
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            std::cout << newA[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-    std::cout << getDetermOfMrx(newA,3);
+    return 0;
+    // createAlphaBet();
+    // int mapped = betaAl['V'];
+    // std::cout << mapped << "\n";
     // return 0;
-    // std::cout << alphaBet[betaAl['H']];
-    // return 0;
-    // std::string encode = hillEncode("HELLO", "GYBCHNQKNBURPVOSCXPHJELQV");
-    // std::cout << encode;
+    std::string encode = hillEncode("ACT", "GYBNQKURP");
+    std::cout << encode << "\n";
+    decodeHill(encode, "GYBNQKURP");
 }
