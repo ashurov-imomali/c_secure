@@ -3,6 +3,8 @@
 #include <iostream>
 #include <windows.h>
 #include <map>
+#include <numeric>
+#include <fstream>
 
 std::map<int, char> alphaBet;
 std::map<char, int> betaAl;
@@ -27,11 +29,6 @@ void PrintMrx(double ** mrx,  int row, int col) {
 }
 
 void createAlphaBet() {
-    int s = 'A';
-    for (int i = 0; i < 26; ++i) {
-        alphaBet[i] = s++;
-    }
-    return;
     alphaBet[1] = 9;
     alphaBet[2] = 10;
     alphaBet[3] = 13;
@@ -39,24 +36,16 @@ void createAlphaBet() {
     for (int i = 4; i < 228; ++i) {
         alphaBet[i] = j++;
     }
+
 }
 void createBetaAl() {
-    // betaAl[9] = 1;
-    // betaAl[10] = 2;
-    // betaAl[13] = 3;
-    // int j = 32;
-    // for (int i = 4; i < 228; ++i) {
-    //     betaAl[j++] = i;
-    // }
-    int s = 'A';
-    // betaAl['A'] = 0;
-    // std::cout << betaAl['A'];
-    for (int i = 0; i < 26; ++i) {
-        betaAl[s++] = i;
+    betaAl[9] = 1;
+    betaAl[10] = 2;
+    betaAl[13] = 3;
+    int j = 32;
+    for (int i = 4; i < 228; ++i) {
+        betaAl[j++] = i;
     }
-    // for (int i = 0; i < 26; ++i)
-        // std::cout << betaAl[i];
-    // std::cout << "\n";
 }
 
 std::string getGoodString(std::string key, int m) {
@@ -67,6 +56,8 @@ std::string getGoodString(std::string key, int m) {
     }
     return key;
 }
+
+
 
 int** getMrx(std::string key, int n)
 {
@@ -84,11 +75,10 @@ int** getMrx(std::string key, int n)
     return a;
 }
 
-
 int ** createVectors(std::string txt, int cols)
 {
+    int rows = txt.length() / cols + (txt.length() %3 != 0);
     txt = getGoodString(txt, cols);
-    int rows = txt.length() / cols + txt.length()%cols;
     int ** a = new int*[rows];
     for (int i = 0; i < rows; ++i) {
         a[i] = new int[cols];
@@ -97,11 +87,13 @@ int ** createVectors(std::string txt, int cols)
     {
         for (int j = 0; j < cols; ++j, k++)
         {
-            a[i][j] = betaAl[txt[k]];
+            int tmp = betaAl[txt[k]];
+            a[i][j] = tmp;
         }
     }
     return a;
 }
+
 
 
 int *multiPly(int **key, int *text, int n) {
@@ -143,10 +135,13 @@ std::string GetStrDecFromMrx(int **mrx, int rows, int cols) {
     std::string str;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            str += betaAl[mrx[i][j]];
+            if (alphaBet[mrx[i][j] == 0]) {
+                str+=alphaBet[227];
+                continue;
+            }
+            str += alphaBet[mrx[i][j]];
         }
     }
-
     return str;
 }
 
@@ -204,6 +199,14 @@ int ** getTranspMrx(int **mrx, int n) {
 }
 
 
+int getNumMod(int n, int mod) {
+    if (n >= 0) {
+        return n % mod;
+    }
+    return mod + n % mod;
+}
+
+
 int **getMrxMinors(int **mrx, int n){
     int **nMrx = new int *[n];
     for (int i = 0; i < n; ++i) {
@@ -214,7 +217,9 @@ int **getMrxMinors(int **mrx, int n){
             int **na = getNewA(mrx,i,j,n);
             int k = i+j;
             int determ = getDetermOfMrx(na, n-1);
-            nMrx[i][j] = determ;
+            int modDeterm = getNumMod(determ, betaAl.size());
+            int res = getNumMod(pow(-1, k) * modDeterm, betaAl.size());
+            nMrx[i][j] = res;
         }
     }
 
@@ -223,7 +228,6 @@ int **getMrxMinors(int **mrx, int n){
 }
 
 int **multiPlyMrxtoNum(int **mrx, int n, int num) {
-    std::cout << num  << "\n";
     int **nMrx = new int *[n];
     for (int i = 0; i < n; ++i) {
         nMrx[i] = new int[n];
@@ -235,40 +239,101 @@ int **multiPlyMrxtoNum(int **mrx, int n, int num) {
     }
     return nMrx;
 }
+int extendedGCD(int a, int b, int &x, int &y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    int x1, y1;
+    int gcd = extendedGCD(b, a % b, x1, y1);
+
+    x = y1;
+    y = x1 - (a / b) * y1;
+
+    return gcd;
+}
+
+int modInverse(int a, int m) {
+    int x, y;
+    int gcd = extendedGCD(a, m, x, y);
+
+    if (gcd != 1) {
+        return 0;
+    }
+
+    return (x % m + m) % m;
+}
 
 int **getReverseMrx(int **mrx, int n) {
-    PrintMrxI(mrx, n, n);
-    int determ = getDetermOfMrx(mrx, n) % betaAl.size();
+    int determ = getNumMod(getDetermOfMrx(mrx, n), betaAl.size());
     int ** minors = getMrxMinors(mrx,n);
-    PrintMrxI(minors, n, n);
     int ** transpMrx = getTranspMrx(minors, n);
-    return multiPlyMrxtoNum(transpMrx,n,1);
-}
+    int **res = multiPlyMrxtoNum(transpMrx,n,modInverse(determ,betaAl.size()));
+    return res;
+ }
+
 
 
 
 std::string decodeHill(std::string txt, std::string key)
 {
+    createAlphaBet();
+    createBetaAl();
     int col = 3;
     int** vectors = createVectors(txt, col);
     int** mrx = getMrx(key, col);
     int **reverse = getReverseMrx(mrx, col);
-    int row = txt.length() / col + txt.length()%col;
+    int row = txt.length() / col + (txt.length()%col !=0);
+    PrintMrxI(vectors, row, col);
+    std::cout << "===================================================================================================================================\n";
+    PrintMrxI(reverse, col,col);
     int ** result = multiplyMrxToVectors(reverse, vectors, row, col);
     return GetStrDecFromMrx(result, row, col);
+}
+
+std::string readFile(std::string fileName) {
+    std::ifstream f(fileName);
+    if (!f) {
+        std::cerr << "couln't open file";
+    }
+    std::string line, full;
+    while (std::getline(f, line )) full+=line;
+    f.close();
+    return full;
 }
 
 
 int main() {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-    createBetaAl();
+    std::string file = readFile("../input.txt");
     return 0;
-    // createAlphaBet();
-    // int mapped = betaAl['V'];
-    // std::cout << mapped << "\n";
-    // return 0;
-    std::string encode = hillEncode("ACT", "GYBNQKURP");
-    std::cout << encode << "\n";
-    decodeHill(encode, "GYBNQKURP");
+    std::string file1;
+    for (int i = 0; i < file.length(); ++i) {
+        if (file[i] == '\n') {
+            file1 += 10;
+            file1 += 13;
+            continue;
+        }
+        file1 += file[i];
+    }
+
+
+    std::string dec =  decodeHill(file, "предложение");
+    std::cout<<dec;
+    std::ofstream f("output.txt");
+    f << dec;
+    f.close();
+    return 0;
+    std::string s[]={"доступный", "информатика", "информация", "клавиатура",
+        "клиент", "компьютер", "модернизация", "накопление",
+        "обеспечить", "память", "предложение", "прикладная",
+        "системное", "сохранение", "угроза", "целостность",
+        "центральный", "шифрование"};
+    for (int i = 0; i < 13; i++) {
+        decodeHill(file, s[i]);
+
+        // std::cout << s[i] << "\n" << decodeHill(file, s[i])<<"\n=======================================================\n";
+    }
 }
