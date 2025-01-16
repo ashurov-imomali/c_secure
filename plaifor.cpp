@@ -85,6 +85,7 @@ std::string getCleanStr(std::string s) {
     return s;
 }
 int *getDecFromMatrix(int *a, int *b) {
+    if (a == nullptr || b == nullptr) return new int[4]{0,0,0,0};
     int rowA = a[0], colA = a[1], rowB = b[0], colB = b[1];
 
     if (rowA == rowB && colA == colB)
@@ -101,7 +102,7 @@ int *getDecFromMatrix(int *a, int *b) {
 
 
 
-std::string  plaiforEncode(std::string key, std::string s) {
+std::string  plaiforEncode(std::string s, std::string key) {
     std::map<char, int*> mp1= getMatrix(key);
     s = getCleanStr(s);
     std::string enc;

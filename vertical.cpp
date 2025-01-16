@@ -29,8 +29,30 @@ std::string sort(std::string s)
     return s;
 }
 
+std::map<int, int> sortIn(int *s, int n)
+{
+    std::map<int, int> mp;
+    for (int i = n-1; i >= 0; i--)
+    {
+        int maxInd = i, max = s[i];
+        for (int j = 0; j < i; j++)
+        {
+            if (s[j] > max)
+            {
+                max = s[j];
+                maxInd = j;
+            }
+        }
+        mp[s[maxInd]] = i;
+        std::swap(s[i], s[maxInd]);
+    }
+    return mp;
+}
+
+
 std::string verticalEncode(std::string text, std::string key)
 {
+    key = getUnique(key);
     int kl = key.length(), tl = text.length();
     int rows = tl/kl +(tl%kl != 0), columns = kl;
     std::string matrix[rows][columns];
@@ -57,27 +79,6 @@ std::string verticalEncode(std::string text, std::string key)
     }
     return res;
 }
-
-std::map<int, int> sortIn(int *s, int n)
-{
-    std::map<int, int> mp;
-    for (int i = n-1; i >= 0; i--)
-    {
-        int maxInd = i, max = s[i];
-        for (int j = 0; j < i; j++)
-        {
-            if (s[j] > max)
-            {
-                max = s[j];
-                maxInd = j;
-            }
-        }
-        mp[s[maxInd]] = i;
-        std::swap(s[i], s[maxInd]);
-    }
-    return mp;
-}
-
 
 std::string cleanString(std::string s)
 {

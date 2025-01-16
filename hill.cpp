@@ -103,7 +103,7 @@ int *multiPly(int **key, int *text, int n) {
         for (int j = 0; j < n; ++j) {
             tmp += key[i][j] * text[j];
         }
-        res[i] = tmp % betaAl.size();
+        res[i] = ((tmp-1) % betaAl.size()) +1;
     }
     return res;
 }
@@ -276,6 +276,7 @@ int **getReverseMrx(int **mrx, int n) {
 
 
 
+
 std::string decodeHill(std::string txt, std::string key)
 {
     createAlphaBet();
@@ -285,55 +286,39 @@ std::string decodeHill(std::string txt, std::string key)
     int** mrx = getMrx(key, col);
     int **reverse = getReverseMrx(mrx, col);
     int row = txt.length() / col + (txt.length()%col !=0);
-    PrintMrxI(vectors, row, col);
-    std::cout << "===================================================================================================================================\n";
-    PrintMrxI(reverse, col,col);
     int ** result = multiplyMrxToVectors(reverse, vectors, row, col);
-    return GetStrDecFromMrx(result, row, col);
-}
-
-std::string readFile(std::string fileName) {
-    std::ifstream f(fileName);
-    if (!f) {
-        std::cerr << "couln't open file";
-    }
-    std::string line, full;
-    while (std::getline(f, line )) full+=line;
-    f.close();
-    return full;
-}
-
-
-int main() {
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
-    std::string file = readFile("../input.txt");
-    return 0;
-    std::string file1;
-    for (int i = 0; i < file.length(); ++i) {
-        if (file[i] == '\n') {
-            file1 += 10;
-            file1 += 13;
-            continue;
+    std::string res;
+    for (int i = 0; i < row; ++i) {
+        // for (int j = 0; j < col; ++j) {
+        //     std::cout << vectors[i][j] << " ";
+        // }
+        // std::cout << "\t";
+        // for (int j = 0; j < col; ++j) {
+        //     std::cout << txt[i*col+j] << " ";
+        // }
+        // std::cout << "\t";
+        // for (int j = 0; j < col; ++j) {
+        //     std::cout << result[i][j] << " ";
+        // }
+        // std::cout << "\t";
+        for (int j = 0; j < col; ++j) {
+            res += alphaBet[result[i][j]];
+            // std::cout << alphaBet[result[i][j]] << " ";
         }
-        file1 += file[i];
+        // std::cout << "\n";
     }
-
-
-    std::string dec =  decodeHill(file, "предложение");
-    std::cout<<dec;
-    std::ofstream f("output.txt");
-    f << dec;
-    f.close();
-    return 0;
-    std::string s[]={"доступный", "информатика", "информация", "клавиатура",
-        "клиент", "компьютер", "модернизация", "накопление",
-        "обеспечить", "память", "предложение", "прикладная",
-        "системное", "сохранение", "угроза", "целостность",
-        "центральный", "шифрование"};
-    for (int i = 0; i < 13; i++) {
-        decodeHill(file, s[i]);
-
-        // std::cout << s[i] << "\n" << decodeHill(file, s[i])<<"\n=======================================================\n";
-    }
+    return res;
 }
+
+// std::string readFile(std::string fileName) {
+//     std::ifstream f(fileName);
+//     if (!f) {
+//         std::cerr << "couln't open file";
+//     }
+//     std::string line, full;
+//     while (std::getline(f, line )) full+=line+"\n";
+//     full = full.substr(0, full.length() -1);
+//     f.close();
+//     return full;
+// }
+

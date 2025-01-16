@@ -13,4 +13,7 @@ add_executable(secure main.cpp
         plaifor.cpp
         hill.cpp
         hill.h
+        keys.cpp
+        keys.h
+        keys.h
 )
