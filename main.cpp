@@ -3,6 +3,7 @@
 #include "vertical.h"
 #include "veginer.h"
 #include "hill.h"
+#include "algebra.h"
 #include "keys.h"
 #include <windows.h>
 #include <fstream>
@@ -45,6 +46,7 @@ std::map<int, std::function<std::string(std::string, std::string)>> getFuncMaps(
     mp[2] = verticalDecode;
     mp[3] = plaiforDecode;
     mp[4] = decodeHill;
+    mp[5] = decodeAlgebra;
     return mp;
 }
 
@@ -55,6 +57,7 @@ std::map<int, std::function<std::string(std::string, std::string)>> getFuncEncMa
     mp[2] = verticalEncode;
     mp[3] = plaiforEncode;
     mp[4] = hillEncode;
+    mp[5] = encodeAlgebra;
     return mp;
 }
 
@@ -72,12 +75,13 @@ std::map<int, std::string>getMethNames() {
     mp[2] = "Vertical";
     mp[3] = "Plaifor";
     mp[4] = "Hill";
+    mp[5] = "Algebra";
     return mp;
 }
 
 
 int PrintMethods() {
-    std::cout << "1-Cesar\n2-Veginer\n3-Vertical\n4-Plaifor\n5-Hill\n";
+    std::cout << "1-Cesar\n2-Veginer\n3-Vertical\n4-Plaifor\n5-Hill\n6-Algebra\n";
     int check;
     std::cin >> check;
     return check;
@@ -135,7 +139,6 @@ int main(){
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     Interface();
-
     // std::string vertical_encode = verticalEncode(imomali, test);
     // std::cout << verticalDecode(vertical_encode, test);
     // return 0;
@@ -150,6 +153,8 @@ int main(){
     std::vector<std::string> keys = getKeys();
     std::string stream;
     std::string file = readFile("../input.txt");
+    std::cout << decodeAlgebra(file, "keyboard");
+    return 0;
     for (std::string key: keys) {
     // std::string key = "structure";
     for (int i = 0; i < 5; ++i) {

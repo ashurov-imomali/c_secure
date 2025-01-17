@@ -16,4 +16,6 @@ add_executable(secure main.cpp
         keys.cpp
         keys.h
         keys.h
+        algebra.cpp
+        algebra.h
 )
