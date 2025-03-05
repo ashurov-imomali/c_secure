@@ -16,7 +16,7 @@ std::string getClearString(std::string s) {
     // М+а -> ема
     // ЌOь -> дан
     // њЕ< -> адм
-    std::map<std::string, std::string> mp{{"RvA","ез "},{"}’у", "И т"},{"F,є", "ерн"},{"‹±s","сис"}, {"М+а","ема"}, {"ЌOь","дан"}, {"њЕ<", "адм"}};
+    std::map<std::string, std::string> mp{{"ъъъ",""},{"RvA","ез "},{"}’у", "И т"},{"F,є", "ерн"},{"‹±s","сис"}, {"М+а","ема"}, {"ЌOь","дан"}, {"њЕ<", "адм"}};
     for (std::pair<std::string, std::string> p:mp) {
         while (s.find(p.first,0) != std::string::npos) {
             s.replace(s.find(p.first), 3, p.second);
