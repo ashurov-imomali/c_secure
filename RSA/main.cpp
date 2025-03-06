@@ -99,7 +99,7 @@ std::string Encode(const std::string& fileName, int p, int q, int e) {
     }
 
     std::string encryptedUtf8 = convert.to_bytes(u32Output);
-    writeToFile("../input1.txt", encryptedUtf8);
+    writeToFile(encryptedUtf8, "../input.txt");
     return encryptedUtf8;
 }
 
@@ -134,7 +134,58 @@ long long findPublicExponent(long long p, long long q, long long d) {
 }
 
 
+
+void Interface()
+{
+    std::cout << "1.Encode\n2.Decode\n3.Exit\n";
+    int choose;
+    std::cin >> choose;
+    switch (choose)
+    {
+    case 1:
+        std::cout << "Choose file\n1.input.txt\n2.output.txt\n";
+        int nc;
+        std::cin >> nc;
+        if (nc == 1)
+        {
+            std::cout << "P Q D: ";
+            int p, q, d;
+            std::cin >> p >> q >> d;
+            std::cout << Encode("../input.txt", p, q,d) << "\nSave to input.txt\n\n";
+        }else
+        {
+                std::cout << "P Q D: ";
+                int p, q, d;
+                std::cin >> p >> q >> d;
+                std::cout << Encode("../output.txt", p, q,d) << "\nSave to output.txt\n\n";
+        }
+        Interface();
+    case 2:
+        std::cout << "Choose file\n 1.input.txt\n2.output.txt";
+        int ncc;
+        std::cin >> ncc;
+        if (ncc == 1)
+        {
+            std::cout << "P Q D: ";
+            int p, q, d;
+            std::cin >> p >> q >> d;
+            std::cout << Decode("../input.txt", p, q,d) << "\nSave to input.txt\n\n";
+        }else
+        {
+            std::cout << "P Q D: ";
+            int p, q, d;
+            std::cin >> p >> q >> d;
+            std::cout << Decode("../output.txt", p, q,d) << "\nSave to output.txt\n\n";
+        }
+        Interface();
+    default:
+            Interface();
+    }
+}
+
+
 int main(){
+    Interface();
     int p = 73, q = 103, d = 941;
     std::cout << Encode("../output.txt", p,q, findPublicExponent(p,q,d));
     return 0;
